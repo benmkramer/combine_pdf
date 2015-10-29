@@ -180,15 +180,17 @@ module CombinePDF
 					# instead, a non-strict RegExp is used:
 					str = @scanner.scan_until(/endstream/)
 					# raise error if the stream doesn't end.
-					raise "Parsing Error: PDF file error - a stream object wasn't properly closed using 'endstream'!" unless str
+					#raise "Parsing Error: PDF file error - a stream object wasn't properly closed using 'endstream'!" unless str
 					# need to remove end of stream
-					if out.last.is_a? Hash
-						# out.last[:raw_stream_content] = str[0...-10] #cuts only one EON char (\n or \r)
-						out.last[:raw_stream_content] = unify_string str.sub(/[\n\r]?[\n\r]endstream\z/, "").force_encoding(Encoding::ASCII_8BIT)
-					else
-						warn "Stream not attached to dictionary!"
-						out << str.sub(/[\n\r]?[\n\r]endstream\z/, "").force_encoding(Encoding::ASCII_8BIT)
-					end
+          unless str.nil?
+            if out.last.is_a? Hash
+              # out.last[:raw_stream_content] = str[0...-10] #cuts only one EON char (\n or \r)
+              out.last[:raw_stream_content] = unify_string str.sub(/[\n\r]?[\n\r]endstream\z/, "").force_encoding(Encoding::ASCII_8BIT)
+            else
+              warn "Stream not attached to dictionary!"
+              out << str.sub(/[\n\r]?[\n\r]endstream\z/, "").force_encoding(Encoding::ASCII_8BIT)
+            end
+          end
 				##########################################
 				## parse an Object after finished
 				##########################################
